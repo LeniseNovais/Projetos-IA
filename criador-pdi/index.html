@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criador de PDI - byx</title>
+<style>
+  :root {
+    --byx-blue: #4003FF;
+    --byx-dark: #000949;
+    --byx-light: #E3F1FF;
+    --byx-sky: #96BFE2;
+    --byx-purple: #845AF9;
+    --byx-yellow: #FCC359;
+    --white: #ffffff;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --shadow: 0 10px 40px rgba(64, 3, 255, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, var(--byx-light) 0%, #f5f8ff 100%);
+    min-height: 100vh;
+    color: var(--byx-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .header {
+    background: var(--byx-blue);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(64, 3, 255, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .logo-svg {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+  }
+
+  .header-title {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .progress-container {
+    background: rgba(255, 255, 255, 0.2);
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 200px;
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, var(--byx-yellow), var(--white));
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .screen {
+    display: none;
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+
+  .welcome-hero {
+    text-align: center;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, var(--byx-blue) 0%, var(--byx-purple) 100%);
+    border-radius: 24px;
+    color: var(--white);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(252, 195, 89, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .welcome-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(150, 191, 226, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .logo-big {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    animation: float 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  .welcome-hero h1 {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .welcome-hero p {
+    font-size: 18px;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .info-card {
+    background: var(--white);
+    border-left: 4px solid var(--byx-blue);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+  }
+
+  .info-card:hover { transform: translateY(-3px); }
+  .info-card.purple { border-color: var(--byx-purple); }
+  .info-card.yellow { border-color: var(--byx-yellow); }
+  .info-card.sky { border-color: var(--byx-sky); }
+
+  .info-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: var(--byx-dark);
+  }
+
+  .info-card p {
+    font-size: 14px;
+    color: var(--gray);
+  }
+
+  .methodology-box {
+    background: linear-gradient(135deg, var(--byx-dark) 0%, var(--byx-blue) 100%);
+    padding: 30px;
+    border-radius: 20px;
+    color: var(--white);
+    margin: 30px 0;
+  }
+
+  .methodology-box h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .method-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .method-item .pct {
+    font-size: 32px;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .method-item .label {
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--byx-dark);
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: var(--gray);
+    margin-bottom: 30px;
+    font-size: 16px;
+  }
+
+  .step-indicator {
+    display: inline-block;
+    background: var(--byx-light);
+    color: var(--byx-blue);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--byx-dark);
+    font-size: 15px;
+  }
+
+  .helper-text {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  input[type="text"], textarea, select, input[type="date"], input[type="number"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s;
+    background: var(--white);
+    color: var(--byx-dark);
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus, input[type="date"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--byx-blue);
+    box-shadow: 0 0 0 4px rgba(64, 3, 255, 0.1);
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-card {
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--white);
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .option-card:hover {
+    border-color: var(--byx-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(64, 3, 255, 0.1);
+  }
+
+  .option-card.selected {
+    border-color: var(--byx-blue);
+    background: linear-gradient(135deg, var(--byx-blue) 0%, var(--byx-purple) 100%);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+
+  .option-card .opt-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .option-card .opt-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .option-card .opt-desc {
+    font-size: 12px;
+    opacity: 0.8;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+  }
+
+  .btn-primary {
+    background: var(--byx-blue);
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(64, 3, 255, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: var(--byx-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(64, 3, 255, 0.4);
+  }
+
+  .btn-secondary {
+    background: var(--gray-light);
+    color: var(--byx-dark);
+  }
+
+  .btn-secondary:hover { background: #e5e7eb; }
+
+  .btn-yellow {
+    background: var(--byx-yellow);
+    color: var(--byx-dark);
+    box-shadow: 0 4px 15px rgba(252, 195, 89, 0.4);
+  }
+
+  .btn-yellow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(252, 195, 89, 0.5);
+  }
+
+  .btn-danger {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .btn-danger:hover { background: #fecaca; }
+
+  .btn-success {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .btn-success:hover { background: #a7f3d0; }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .quantity-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .qty-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--byx-blue);
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+  }
+
+  .qty-btn:hover {
+    background: var(--byx-dark);
+    transform: scale(1.1);
+  }
+
+  .qty-display {
+    font-size: 60px;
+    font-weight: 800;
+    color: var(--byx-blue);
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .qty-label {
+    text-align: center;
+    color: var(--gray);
+    font-size: 14px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+  }
+
+  .example-box {
+    background: rgba(252, 195, 89, 0.15);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 15px 0;
+    border-left: 3px solid var(--byx-yellow);
+    font-size: 14px;
+  }
+
+  .example-box strong {
+    color: var(--byx-dark);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .example-box em {
+    color: var(--gray);
+    font-size: 13px;
+  }
+
+  .reflection-question {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-left: 4px solid var(--byx-purple);
+  }
+
+  .reflection-question.q2 { border-left-color: var(--byx-blue); }
+  .reflection-question.q3 { border-left-color: var(--byx-yellow); }
+  .reflection-question.q4 { border-left-color: var(--byx-sky); }
+  .reflection-question.q5 { border-left-color: var(--byx-purple); }
+  .reflection-question.q6 { border-left-color: var(--byx-blue); }
+  .reflection-question.q7 { border-left-color: var(--byx-yellow); }
+
+  .q-number {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    background: var(--byx-blue);
+    color: var(--white);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 700;
+    margin-right: 12px;
+  }
+
+  .loading-container {
+    text-align: center;
+    padding: 80px 40px;
+    background: linear-gradient(135deg, var(--byx-blue) 0%, var(--byx-purple) 100%);
+    border-radius: 24px;
+    color: var(--white);
+  }
+
+  .spinner {
+    width: 80px;
+    height: 80px;
+    border: 6px solid rgba(255,255,255,0.2);
+    border-top-color: var(--byx-yellow);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 30px;
+  }
+
+  .loading-text {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .loading-subtext {
+    opacity: 0.9;
+    font-size: 15px;
+  }
+
+  .loading-steps {
+    margin-top: 30px;
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .loading-step {
+    padding: 10px 0;
+    opacity: 0.5;
+    transition: opacity 0.5s;
+    font-size: 14px;
+  }
+
+  .loading-step.active {
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  .loading-step.done {
+    opacity: 1;
+    color: var(--byx-yellow);
+  }
+
+  .pdi-result {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border-top: 6px solid var(--byx-blue);
+    transition: all 0.3s;
+  }
+
+  .pdi-result.potencializar {
+    border-top-color: var(--byx-yellow);
+  }
+
+  .pdi-result.removed {
+    opacity: 0.4;
+    background: var(--gray-light);
+    text-decoration: line-through;
+  }
+
+  .pdi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pdi-badge {
+    display: inline-block;
+    background: var(--byx-blue);
+    color: var(--white);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .pdi-badge.potencializar {
+    background: var(--byx-yellow);
+    color: var(--byx-dark);
+  }
+
+  .pdi-actions-bar {
+    display: flex;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    background: var(--gray-light);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .icon-btn.edit:hover { background: var(--byx-light); color: var(--byx-blue); }
+  .icon-btn.delete:hover { background: #fee2e2; color: #991b1b; }
+  .icon-btn.restore { background: #d1fae5; color: #065f46; }
+  .icon-btn.restore:hover { background: #a7f3d0; }
+
+  .pdi-title-area h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--byx-dark);
+    margin-bottom: 8px;
+  }
+
+  .pdi-section {
+    margin-bottom: 15px;
+  }
+
+  .pdi-section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--byx-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+
+  .pdi-section-content {
+    color: var(--byx-dark);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .pdi-actions-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--gray-light);
+  }
+
+  .pdi-actions-section h4 {
+    font-size: 15px;
+    color: var(--byx-dark);
+    margin-bottom: 12px;
+  }
+
+  .action-item {
+    background: linear-gradient(135deg, var(--byx-light) 0%, #f5f8ff 100%);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--byx-blue);
+    position: relative;
+  }
+
+  .action-item.purple { border-left-color: var(--byx-purple); }
+  .action-item.sky { border-left-color: var(--byx-sky); }
+  .action-item.removed {
+    opacity: 0.4;
+    text-decoration: line-through;
+  }
+
+  .action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .action-type-tag {
+    background: var(--byx-blue);
+    color: var(--white);
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .action-type-tag.purple { background: var(--byx-purple); }
+  .action-type-tag.sky { background: var(--byx-sky); color: var(--byx-dark); }
+
+  .action-deadline {
+    font-size: 12px;
+    color: var(--byx-blue);
+    font-weight: 600;
+  }
+
+  .action-name {
+    font-weight: 700;
+    color: var(--byx-dark);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  .action-desc, .action-indicator {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+
+  .action-indicator {
+    background: rgba(255,255,255,0.6);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 6px;
+    color: var(--byx-dark);
+  }
+
+  .action-mini-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .mini-icon-btn {
+    background: rgba(255,255,255,0.7);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+
+  .mini-icon-btn:hover { transform: scale(1.15); }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 9, 73, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+    animation: fadeInUp 0.3s;
+  }
+
+  .modal-content {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-content h3 {
+    color: var(--byx-blue);
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+
+  .balance-chart {
+    background: linear-gradient(135deg, var(--byx-dark) 0%, var(--byx-blue) 100%);
+    border-radius: 20px;
+    padding: 30px;
+    color: var(--white);
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .balance-bars {
+    display: flex;
+    height: 60px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+
+  .balance-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    transition: width 1s ease;
+  }
+
+  .seg-70 { background: var(--byx-blue); }
+  .seg-20 { background: var(--byx-purple); }
+  .seg-10 { background: var(--byx-sky); color: var(--byx-dark); }
+
+  .balance-legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .legend-item {
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.95;
+  }
+
+  .add-pdi-card {
+    background: rgba(255,255,255,0.5);
+    border: 2px dashed var(--byx-blue);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: var(--byx-blue);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .add-pdi-card:hover {
+    background: var(--byx-light);
+    transform: translateY(-2px);
+  }
+
+  .warning-box {
+    background: #FEF3C7;
+    border-left: 4px solid #F59E0B;
+    color: #92400E;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    animation: shake 0.5s;
+  }
+
+  .warning-box strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .error-box {
+    background: #fee2e2;
+    border-left: 4px solid #991b1b;
+    color: #991b1b;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .final-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+    font-size: 13px;
+    border-top: 2px solid #e5e7eb;
+    margin-top: 30px;
+  }
+
+  .footer-credit {
+    text-align: center;
+    padding: 10px 0;
+    color: #9ca3af;
+    font-size: 12px;
+    margin-top: 20px;
+  }
+
+  @media print {
+    .header, .button-group, .final-actions, .progress-container, .pdi-actions-bar, .action-mini-actions, .add-pdi-card { display: none !important; }
+    body { background: white; }
+    .card, .pdi-result { box-shadow: none; border: 1px solid #e5e7eb; page-break-inside: avoid; }
+  }
+
+  @media (max-width: 768px) {
+    .header { padding: 15px 20px; }
+    .header-title { font-size: 16px; }
+    .progress-container { width: 100px; }
+    .welcome-hero { padding: 40px 20px; }
+    .welcome-hero h1 { font-size: 28px; }
+    .method-grid { grid-template-columns: 1fr; }
+    .card { padding: 25px 20px; }
+    h2 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.15)"/>
+      <path d="M 25 70 L 40 55 L 55 65 L 75 35" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="75" cy="35" r="5" fill="white"/>
+      <circle cx="55" cy="65" r="4" fill="white"/>
+      <circle cx="40" cy="55" r="4" fill="white"/>
+      <circle cx="25" cy="70" r="4" fill="white"/>
+    </svg>
+    <div class="header-title">Criador de PDI</div>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TELA 1: BOAS-VINDAS -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-hero">
+      <svg class="logo-big" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="45" fill="rgba(255,255,255,0.15)"/>
+        <path d="M 25 70 L 40 55 L 55 65 L 75 35" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="75" cy="35" r="5" fill="white"/>
+        <circle cx="55" cy="65" r="4" fill="white"/>
+        <circle cx="40" cy="55" r="4" fill="white"/>
+        <circle cx="25" cy="70" r="4" fill="white"/>
+      </svg>
+      <h1>Vamos construir seu Plano de desenvolvimento individual (PDI)</h1>
+      <p>Responda algumas perguntas e a IA vai gerar seus objetivos completos com planos de ações. Você revisa, edita e aprova no final.</p>
+    </div>
+
+    <div class="card">
+      <h2>O que faz um plano de desenvolvimento realmente funcionar?</h2>
+      <p class="subtitle">O segredo está na forma como você usa.</p>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>🎯 Pense num objetivo real</h3>
+          <p>1 a 3 prioridades que realmente importam para você agora.</p>
+        </div>
+        <div class="info-card purple">
+          <h3>⚡ Pense em ações concretas</h3>
+          <p>O que você vai fazer, quando e como — não seja vago.</p>
+        </div>
+        <div class="info-card yellow">
+          <h3>🔗 Objetivo ligado à rotina</h3>
+          <p>Seus objetivos devem estar ligados ao seu trabalho real, e não apartado dele.</p>
+        </div>
+        <div class="info-card sky">
+          <h3>📊 Pense no seu acompanhamento</h3>
+          <p>As reuniões de 1:1 e os checkpoints com seu gestor podem te dar um norte em seu desenvolvimento.</p>
+        </div>
+      </div>
+
+      <div class="methodology-box">
+        <h3>Como o desenvolvimento realmente acontece</h3>
+        <div class="method-grid">
+          <div class="method-item">
+            <span class="pct">70%</span>
+            <span class="label">Experiência prática<br>(projetos, desafios)</span>
+          </div>
+          <div class="method-item">
+            <span class="pct">20%</span>
+            <span class="label">Trocas e feedbacks<br>(mentoria, 1:1s)</span>
+          </div>
+          <div class="method-item">
+            <span class="pct">10%</span>
+            <span class="label">Conteúdo estruturado<br>(cursos, leituras)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-primary" onclick="goToScreen('quantity')">Começar →</button>
+      </div>
+      <div class="footer-credit">Criado por Ana Lenise Novais</div>
+    </div>
+  </div>
+
+  <!-- TELA 2: QUANTIDADE -->
+  <div class="screen" id="screen-quantity">
+    <div class="card">
+      <span class="step-indicator">Passo 1 de 3</span>
+      <h2>Quantos objetivos você quer criar?</h2>
+      <p class="subtitle">Recomendamos entre 1 e 3 para manter foco real. Menos objetivos, mais profundidade.</p>
+
+      <div class="quantity-selector">
+        <button class="qty-btn" onclick="changeQuantity(-1)">−</button>
+        <div class="qty-display" id="qtyDisplay">2</div>
+        <button class="qty-btn" onclick="changeQuantity(1)">+</button>
+      </div>
+      <div class="qty-label">PDIs</div>
+
+      <div class="form-group">
+        <label>Quantas ações você quer por objetivo?</label>
+        <p class="helper-text">Idealmente 3 ações (uma de cada tipo: prática 70%, troca 20%, conteúdo 10%).</p>
+        <div class="quantity-selector">
+          <button class="qty-btn" onclick="changeActionQty(-1)">−</button>
+          <div class="qty-display" id="actionQtyDisplay">3</div>
+          <button class="qty-btn" onclick="changeActionQty(1)">+</button>
+        </div>
+        <div class="qty-label">Ações por PDI</div>
+      </div>
+
+      <div class="example-box">
+        <strong>💡 Dica</strong>
+        <em>Um objetivo bem feito vale mais do que cinco superficiais. Você poderá editar, ajustar ou remover qualquer item depois.</em>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="goToScreen('welcome')">← Voltar</button>
+        <button class="btn-primary" onclick="goToScreen('discovery')">Próximo →</button>
+      </div>
+      <div class="footer-credit">Criado por Ana Lenise Novais</div>
+    </div>
+  </div>
+
+  <!-- TELA 3: DESCOBERTA -->
+  <div class="screen" id="screen-discovery">
+    <div class="card">
+      <span class="step-indicator">Passo 2 de 3 · Sobre você</span>
+      <h2>Me conte sobre você</h2>
+      <p class="subtitle">Estas perguntas valem para <strong>todos os seus Objetivos</strong>. A IA vai usar suas respostas para gerar PDIs únicos, conectados entre si, e o plano de ações completo.</p>
+
+      <div class="reflection-question">
+        <label><span class="q-number">1</span> Qual é o seu cargo / função atual?</label>
+        <input type="text" id="cargo" placeholder="Ex: Analista de Marketing, Engenheiro de Software, Gerente de Projetos...">
+      </div>
+
+      <div class="reflection-question q2">
+        <label><span class="q-number">2</span> Em qual momento da sua carreira você está?</label>
+        <div class="options-grid">
+          <div class="option-card" onclick="selectOption(this, 'momento', 'inicio')">
+            <span class="opt-icon">🌱</span>
+            <div class="opt-title">Início</div>
+            <div class="opt-desc">Aprendendo o básico</div>
+          </div>
+          <div class="option-card" onclick="selectOption(this, 'momento', 'crescimento')">
+            <span class="opt-icon">🚀</span>
+            <div class="opt-title">Crescimento</div>
+            <div class="opt-desc">Ganhando autonomia</div>
+          </div>
+          <div class="option-card" onclick="selectOption(this, 'momento', 'transicao')">
+            <span class="opt-icon">🔄</span>
+            <div class="opt-title">Transição</div>
+            <div class="opt-desc">Mudando de área/foco</div>
+          </div>
+          <div class="option-card" onclick="selectOption(this, 'momento', 'lideranca')">
+            <span class="opt-icon">👥</span>
+            <div class="opt-title">Liderança</div>
+            <div class="opt-desc">Liderando pessoas/projetos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-question q3">
+        <label><span class="q-number">3</span> Que feedbacks você recebeu recentemente?</label>
+        <p class="helper-text">Do seu líder, colegas, ciclo de performance. Pode ser positivo ou construtivo. Quanto mais detalhe, melhor a IA vai te ajudar.</p>
+        <textarea id="feedbacks" placeholder="Ex: Meu líder disse que tenho boa execução técnica, mas preciso desenvolver comunicação com áreas parceiras e ser mais proativo em propor melhorias..."></textarea>
+      </div>
+
+      <div class="reflection-question q4">
+        <label><span class="q-number">4</span> O que te frustra, trava ou você sente como um gap hoje?</label>
+        <p class="helper-text">Aquelas coisas que você gostaria de fazer melhor, ou que sente que te impedem de avançar.</p>
+        <textarea id="frustracao" placeholder="Ex: Sinto que perco tempo refazendo análises porque não domino Excel avançado. Tenho dificuldade de me posicionar em reuniões com diretoria..."></textarea>
+      </div>
+
+      <div class="reflection-question q5">
+        <label><span class="q-number">5</span> O que te dá energia e você quer fazer mais?</label>
+        <p class="helper-text">Atividades, habilidades ou áreas em que você se destaca e quer potencializar.</p>
+        <textarea id="energia" placeholder="Ex: Adoro mentorar pessoas mais novas. Tenho facilidade em apresentar dados de forma visual..."></textarea>
+      </div>
+
+      <div class="reflection-question q6">
+        <label><span class="q-number">6</span> Onde você quer estar daqui a 1-2 anos?</label>
+        <p class="helper-text">Não precisa ser um cargo. Pode ser uma capacidade, uma responsabilidade nova, um nível de atuação.</p>
+        <textarea id="futuro" placeholder="Ex: Quero liderar projetos transversais maiores. Quero virar referência em análise de dados na minha área..."></textarea>
+      </div>
+
+      <div class="reflection-question q7">
+        <label><span class="q-number">7</span> Tem algo específico que você já sabe que quer trabalhar?</label>
+        <p class="helper-text">Opcional. Se você já tem uma ideia clara de um ou mais temas de PDI, escreva aqui. Caso contrário, deixe em branco — a IA vai sugerir com base nas respostas anteriores.</p>
+        <textarea id="ideias" placeholder="Ex: Quero trabalhar liderança e visibilidade. Ou: ainda não sei, me ajude a descobrir."></textarea>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-secondary" onclick="goToScreen('quantity')">← Voltar</button>
+        <button class="btn-primary" onclick="generatePDIs()">✨ Gerar PDIs com IA →</button>
+      </div>
+
+      <div id="warningContainer"></div>
+      <div class="footer-credit">Criado por Ana Lenise Novais</div>
+    </div>
+  </div>
+
+  <!-- TELA 4: LOADING -->
+  <div class="screen" id="screen-loading">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <div class="loading-text">Construindo seus PDIs...</div>
+      <div class="loading-subtext">A IA está analisando suas respostas e criando um plano personalizado</div>
+      <div class="loading-steps">
+        <div class="loading-step" id="step1">📚 Lendo suas respostas...</div>
+        <div class="loading-step" id="step2">🎯 Identificando temas de desenvolvimento...</div>
+        <div class="loading-step" id="step3">⚡ Criando planos de ação 70-20-10...</div>
+        <div class="loading-step" id="step4">✨ Finalizando seu PDI personalizado...</div>
+      </div>
+      <div class="footer-credit">Criado por Ana Lenise Novais</div>
+    </div>
+  </div>
+
+  <!-- TELA 5: RESULTADO -->
+  <div class="screen" id="screen-result">
+    <div class="card" style="text-align:center;background:linear-gradient(135deg, var(--byx-blue) 0%, var(--byx-purple) 100%);color:white;">
+      <h2 style="color:white;">✨ Seus PDIs estão prontos!</h2>
+      <p style="opacity:0.95;">Revise abaixo. Você pode <strong>editar</strong>, <strong>remover</strong> ou <strong>adicionar</strong> qualquer item. Quando estiver satisfeito, finalize seu plano.</p>
+    </div>
+
+    <div id="errorContainer"></div>
+
+    <div class="balance-chart" id="balanceChart" style="display:none;">
+      <h3>Equilíbrio do plano de ações</h3>
+      <p style="opacity:0.9;font-size:14px;">Metodologia 70 · 20 · 10</p>
+      <div class="balance-bars" id="balanceBars"></div>
+      <div class="balance-legend">
+        <div class="legend-item"><strong>Experiência prática</strong><br><span id="pct70">0%</span></div>
+        <div class="legend-item"><strong>Trocas e feedbacks</strong><br><span id="pct20">0%</span></div>
+        <div class="legend-item"><strong>Conteúdo estruturado</strong><br><span id="pct10">0%</span></div>
+      </div>
+    </div>
+
+    <div id="pdisContainer"></div>
+
+    <div class="add-pdi-card" onclick="addNewPDI()">
+      ➕ Adicionar novo PDI manualmente
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <h3 style="color:var(--byx-dark);margin-bottom:10px;">Próximos passos</h3>
+      <p style="color:var(--gray);margin-bottom:20px;">Compartilhe com seu líder no próximo 1:1, defina checkpoints e revise quando necessário. PDI sem revisão é só intenção.</p>
+      <div class="final-actions">
+        <button class="btn-primary" onclick="downloadPDF()">🖨️ Salvar como PDF</button>
+        <button class="btn-yellow" onclick="exportText()">📋 Copiar texto</button>
+        <button class="btn-success" onclick="downloadHTML()">💾 Baixar HTML</button>
+        <button class="btn-secondary" onclick="regenerateAll()">🔄 Gerar outros PDIs</button>
+        <button class="btn-secondary" onclick="restart()">↺ Recomeçar do zero</button>
+      </div>
+      <div class="footer-credit">Criado por Ana Lenise Novais</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal de Confirmação -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-content">
+    <h3 id="confirmTitle">Confirmar ação</h3>
+    <p id="confirmMessage" style="color:var(--gray);margin-bottom:20px;"></p>
+    <div class="button-group">
+      <button class="btn-secondary" onclick="closeConfirmModal(false)">Cancelar</button>
+      <button class="btn-primary" onclick="closeConfirmModal(true)">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição PDI -->
+<div class="modal-overlay" id="editPdiModal">
+  <div class="modal-content">
+    <h3>✏️ Editar PDI</h3>
+    <div class="form-group">
+      <label>Título do PDI</label>
+      <input type="text" id="editPdiTitle">
+    </div>
+    <div class="form-group">
+      <label>Tipo</label>
+      <div class="options-grid">
+        <div class="option-card" onclick="selectEditType(this, 'desenvolver')" id="editTypeDev">
+          <span class="opt-icon">🌱</span>
+          <div class="opt-title">Desenvolver</div>
+        </div>
+        <div class="option-card" onclick="selectEditType(this, 'potencializar')" id="editTypePot">
+          <span class="opt-icon">⭐</span>
+          <div class="opt-title">Potencializar</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Por que importa agora?</label>
+      <textarea id="editPdiWhy"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Descrição / gaps a preencher</label>
+      <textarea id="editPdiDesc"></textarea>
+    </div>
+    <div class="button-group">
+      <button class="btn-secondary" onclick="closeModal('editPdiModal')">Cancelar</button>
+      <button class="btn-primary" onclick="saveEditPDI()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição Ação -->
+<div class="modal-overlay" id="editActionModal">
+  <div class="modal-content">
+    <h3>✏️ Editar Ação</h3>
+    <div class="form-group">
+      <label>Tipo da ação (70-20-10)</label>
+      <select id="editActionType">
+        <option value="desafio">🎯 70% · Desafio profissional</option>
+        <option value="mentoria">💬 20% · Mentoria e feedbacks</option>
+        <option value="treinamento">📚 10% · Treinamento e estudo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nome da ação</label>
+      <input type="text" id="editActionName">
+    </div>
+    <div class="form-group">
+      <label>Descrição (como será executada)</label>
+      <textarea id="editActionDesc"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Prazo</label>
+      <input type="date" id="editActionDeadline">
+    </div>
+    <div class="form-group">
+      <label>Como saberá que funcionou?</label>
+      <textarea id="editActionIndicator"></textarea>
+    </div>
+    <div class="button-group">
+      <button class="btn-secondary" onclick="closeModal('editActionModal')">Cancelar</button>
+      <button class="btn-primary" onclick="saveEditAction()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = {
+    totalPDIs: 2,
+    actionsPerPDI: 3,
+    discovery: {},
+    pdis: [],
+    editingPdiIndex: null,
+    editingActionIndex: null,
+    editingPdiType: 'desenvolver'
+  };
+
+  const screens = ['welcome', 'quantity', 'discovery', 'loading', 'result'];
+  let currentScreen = 'welcome';
+
+  function goToScreen(screenName) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screenName).classList.add('active');
+    currentScreen = screenName;
+    updateProgress();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function updateProgress() {
+    const idx = screens.indexOf(currentScreen);
+    const pct = ((idx + 1) / screens.length) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  function changeQuantity(delta) {
+    state.totalPDIs = Math.max(1, Math.min(5, state.totalPDIs + delta));
+    document.getElementById('qtyDisplay').textContent = state.totalPDIs;
+  }
+
+  function changeActionQty(delta) {
+    state.actionsPerPDI = Math.max(1, Math.min(6, state.actionsPerPDI + delta));
+    document.getElementById('actionQtyDisplay').textContent = state.actionsPerPDI;
+  }
+
+  function selectOption(elem, field, value) {
+    elem.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    elem.classList.add('selected');
+    state.discovery[field] = value;
+  }
+
+  async function generatePDIs() {
+    console.log('generatePDIs chamado');
+    
+    state.discovery.cargo = document.getElementById('cargo').value.trim();
+    state.discovery.feedbacks = document.getElementById('feedbacks').value.trim();
+    state.discovery.frustracao = document.getElementById('frustracao').value.trim();
+    state.discovery.energia = document.getElementById('energia').value.trim();
+    state.discovery.futuro = document.getElementById('futuro').value.trim();
+    state.discovery.ideias = document.getElementById('ideias').value.trim();
+
+    console.log('Discovery:', state.discovery);
+
+    if (!state.discovery.cargo) {
+      alert('Por favor, informe seu cargo/função atual.');
+      return;
+    }
+    const totalText = (state.discovery.feedbacks + state.discovery.frustracao + state.discovery.energia + state.discovery.futuro + state.discovery.ideias).length;
+    console.log('Total text length:', totalText);
+    
+    if (totalText < 20) {
+      showWarning('📝 Preciso de mais informações!\n\nPara criar PDIs relevantes e personalizados, responda com mais detalhes pelo menos 2 ou 3 das perguntas acima.\n\nQuanto mais você compartilhar sobre seus feedbacks, frustrações, objetivos e pontos fortes, melhor a IA consegue te ajudar a criar um PDI que faça sentido pra você.');
+      return;
+    }
+
+    // Limpar warning se existir
+    document.getElementById('warningContainer').innerHTML = '';
+
+    console.log('Iniciando geração...');
+    goToScreen('loading');
+    animateLoadingSteps();
+
+    try {
+      console.log('Chamando API...');
+      const pdis = await callClaudeAPI();
+      console.log('PDIs recebidos:', pdis);
+      state.pdis = pdis;
+      renderResult();
+      goToScreen('result');
+    } catch (err) {
+      console.error('Erro completo:', err);
+      showError('Houve um erro ao gerar seus PDIs. Tente novamente. Detalhes: ' + err.message);
+      goToScreen('discovery');
+    }
+  }
+
+  function animateLoadingSteps() {
+    const steps = ['step1', 'step2', 'step3', 'step4'];
+    steps.forEach((s, i) => {
+      setTimeout(() => {
+        if (i > 0) document.getElementById(steps[i-1]).classList.replace('active', 'done');
+        document.getElementById(s).classList.add('active');
+      }, i * 1500);
+    });
+  }
+
+  async function callClaudeAPI() {
+    const prompt = `Você é um especialista em desenvolvimento de pessoas e PDI (Plano de Desenvolvimento Individual). Vou te passar as respostas de um profissional sobre carreira e desenvolvimento. Sua tarefa é criar exatamente ${state.totalPDIs} PDI(s), cada um com exatamente ${state.actionsPerPDI} ações específicas seguindo a metodologia 70-20-10 da byx.
+
+INFORMAÇÕES DO PROFISSIONAL:
+- Cargo/função: ${state.discovery.cargo}
+- Momento de carreira: ${state.discovery.momento || 'não informado'}
+- Feedbacks recebidos: ${state.discovery.feedbacks || 'não informado'}
+- Frustrações/gaps: ${state.discovery.frustracao || 'não informado'}
+- Pontos fortes / o que dá energia: ${state.discovery.energia || 'não informado'}
+- Onde quer estar em 1-2 anos: ${state.discovery.futuro || 'não informado'}
+- Ideias prévias de PDI: ${state.discovery.ideias || 'sem ideias prévias - sugira você'}
+
+REGRAS:
+1. Crie ${state.totalPDIs} PDI(s) distintos, COMPLEMENTARES (não redundantes entre si).
+2. Cada PDI deve ter tipo "desenvolver" (gap) ou "potencializar" (forte que quer ampliar).
+3. Cada ação deve ter tipo: "desafio" (70% - experiência prática), "mentoria" (20% - trocas/feedbacks) ou "treinamento" (10% - cursos/leituras).
+4. Distribua os tipos das ações respeitando o equilíbrio 70-20-10 (priorize "desafio", depois "mentoria", depois "treinamento").
+5. Toda ação deve ser ESPECÍFICA (não vaga): com o que fazer + quando + como medir.
+6. Prazos: distribua entre os próximos 3-9 meses (formato YYYY-MM-DD). Use datas a partir de hoje.
+7. O título do PDI deve ser curto e claro (3-6 palavras).
+8. "why" (por que importa agora) deve conectar com o trabalho real e feedbacks recebidos.
+
+Responda APENAS com um JSON válido neste formato exato, sem nenhum texto antes ou depois, sem markdown:
+{
+  "pdis": [
+    {
+      "title": "string - título curto do PDI",
+      "type": "desenvolver" ou "potencializar",
+      "why": "string - por que isso importa agora, conectado com feedbacks/contexto",
+      "description": "string - descrição detalhada do PDI e gaps a preencher",
+      "actions": [
+        {
+          "type": "desafio" ou "mentoria" ou "treinamento",
+          "name": "string - nome específico da ação",
+          "description": "string - como será executada, com quem, contexto",
+          "deadline": "YYYY-MM-DD",
+          "indicator": "string - indicador concreto de sucesso, algo observável"
+        }
+      ]
+    }
+  ]
+}
+
+Hoje é ${new Date().toISOString().split('T')[0]}. Retorne EXATAMENTE ${state.totalPDIs} PDI(s) com EXATAMENTE ${state.actionsPerPDI} ações cada.`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 4000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('API error: ' + response.status + ' - ' + errText);
+    }
+
+    const data = await response.json();
+    let text = data.content.map(c => c.text || '').join('').trim();
+    text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Resposta da IA não contém JSON válido');
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+    if (!parsed.pdis || !Array.isArray(parsed.pdis)) {
+      throw new Error('Estrutura JSON inesperada');
+    }
+
+    parsed.pdis.forEach(pdi => {
+      pdi.removed = false;
+      pdi.actions = pdi.actions || [];
+      pdi.actions.forEach(a => a.removed = false);
+    });
+
+    return parsed.pdis;
+  }
+
+  function showError(msg) {
+    const c = document.getElementById('errorContainer');
+    c.innerHTML = `<div class="error-box">⚠️ ${msg}</div>`;
+    setTimeout(() => c.innerHTML = '', 8000);
+  }
+
+  function showWarning(msg) {
+    const c = document.getElementById('warningContainer');
+    const lines = msg.split('\n\n');
+    const title = lines[0];
+    const body = lines.slice(1).join('\n\n');
+    
+    c.innerHTML = `<div class="warning-box"><strong>${title}</strong>${body}</div>`;
+    
+    // Scroll suave até o warning
+    setTimeout(() => {
+      c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+
+  function renderResult() {
+    const container = document.getElementById('pdisContainer');
+    container.innerHTML = '';
+
+    state.pdis.forEach((pdi, idx) => {
+      const card = document.createElement('div');
+      card.className = 'pdi-result' + (pdi.type === 'potencializar' ? ' potencializar' : '') + (pdi.removed ? ' removed' : '');
+
+      const typeLabel = pdi.type === 'desenvolver' ? 'Desenvolver' : 'Potencializar';
+
+      let actionsHTML = '';
+      if (pdi.actions && pdi.actions.length) {
+        actionsHTML = '<div class="pdi-actions-section"><h4>📋 Plano de ações</h4>';
+        pdi.actions.forEach((action, ai) => {
+          let typeClass = '';
+          let typeLabelA = '';
+          if (action.type === 'desafio') { typeClass = ''; typeLabelA = '70% · Desafio'; }
+          else if (action.type === 'mentoria') { typeClass = 'purple'; typeLabelA = '20% · Mentoria'; }
+          else if (action.type === 'treinamento') { typeClass = 'sky'; typeLabelA = '10% · Treinamento'; }
+
+          const deadlineStr = action.deadline ? new Date(action.deadline + 'T00:00:00').toLocaleDateString('pt-BR') : 'Sem prazo';
+
+          actionsHTML += `
+            <div class="action-item ${typeClass} ${action.removed ? 'removed' : ''}">
+              <div class="action-mini-actions">
+                ${action.removed ?
+                  `<button class="mini-icon-btn icon-btn restore" onclick="restoreAction(${idx}, ${ai})" title="Restaurar">↺</button>` :
+                  `<button class="mini-icon-btn" onclick="openEditActionModal(${idx}, ${ai})" title="Editar">✏️</button>
+                   <button class="mini-icon-btn" onclick="removeAction(${idx}, ${ai})" title="Remover">🗑️</button>`
+                }
+              </div>
+              <div class="action-header">
+                <span class="action-type-tag ${typeClass}">${typeLabelA}</span>
+                <span class="action-deadline">📅 ${deadlineStr}</span>
+              </div>
+              <div class="action-name">${escapeHtml(action.name || '')}</div>
+              ${action.description ? `<div class="action-desc">${escapeHtml(action.description)}</div>` : ''}
+              ${action.indicator ? `<div class="action-indicator">✓ <strong>Como saberá:</strong> ${escapeHtml(action.indicator)}</div>` : ''}
+            </div>
+          `;
+        });
+        actionsHTML += `<button class="btn-secondary" style="font-size:13px;padding:8px 16px;" onclick="addNewAction(${idx})">+ Adicionar ação</button>`;
+        actionsHTML += '</div>';
+      }
+
+      card.innerHTML = `
+        <div class="pdi-header">
+          <span class="pdi-badge ${pdi.type === 'potencializar' ? 'potencializar' : ''}">PDI ${idx + 1} · ${typeLabel}</span>
+          <div class="pdi-actions-bar">
+            ${pdi.removed ?
+              `<button class="icon-btn restore" onclick="restorePDI(${idx})" title="Restaurar">↺</button>` :
+              `<button class="icon-btn edit" onclick="openEditPdiModal(${idx})" title="Editar">✏️</button>
+               <button class="icon-btn delete" onclick="removePDI(${idx})" title="Remover">🗑️</button>`
+            }
+          </div>
+        </div>
+        <div class="pdi-title-area">
+          <h3>${escapeHtml(pdi.title || '')}</h3>
+        </div>
+        ${pdi.why ? `<div class="pdi-section"><div class="pdi-section-label">Por que importa</div><div class="pdi-section-content">${escapeHtml(pdi.why)}</div></div>` : ''}
+        ${pdi.description ? `<div class="pdi-section"><div class="pdi-section-label">Descrição</div><div class="pdi-section-content">${escapeHtml(pdi.description)}</div></div>` : ''}
+        ${actionsHTML}
+      `;
+
+      container.appendChild(card);
+    });
+
+    updateBalance();
+  }
+
+  function updateBalance() {
+    let count70 = 0, count20 = 0, count10 = 0;
+    state.pdis.forEach(pdi => {
+      if (pdi.removed) return;
+      pdi.actions.forEach(a => {
+        if (a.removed) return;
+        if (a.type === 'desafio') count70++;
+        else if (a.type === 'mentoria') count20++;
+        else if (a.type === 'treinamento') count10++;
+      });
+    });
+    const total = count70 + count20 + count10;
+
+    if (total === 0) {
+      document.getElementById('balanceChart').style.display = 'none';
+      return;
+    }
+    document.getElementById('balanceChart').style.display = 'block';
+
+    const pct70 = Math.round((count70 / total) * 100);
+    const pct20 = Math.round((count20 / total) * 100);
+    const pct10 = 100 - pct70 - pct20;
+
+    document.getElementById('pct70').textContent = pct70 + '%';
+    document.getElementById('pct20').textContent = pct20 + '%';
+    document.getElementById('pct10').textContent = pct10 + '%';
+
+    const bars = document.getElementById('balanceBars');
+    bars.innerHTML = '';
+    if (pct70 > 0) {
+      const s = document.createElement('div');
+      s.className = 'balance-segment seg-70';
+      s.style.width = pct70 + '%';
+      s.textContent = pct70 > 8 ? pct70 + '%' : '';
+      bars.appendChild(s);
+    }
+    if (pct20 > 0) {
+      const s = document.createElement('div');
+      s.className = 'balance-segment seg-20';
+      s.style.width = pct20 + '%';
+      s.textContent = pct20 > 8 ? pct20 + '%' : '';
+      bars.appendChild(s);
+    }
+    if (pct10 > 0) {
+      const s = document.createElement('div');
+      s.className = 'balance-segment seg-10';
+      s.style.width = pct10 + '%';
+      s.textContent = pct10 > 8 ? pct10 + '%' : '';
+      bars.appendChild(s);
+    }
+  }
+
+  function removePDI(idx) {
+    if (confirm('Tem certeza que deseja remover este PDI? Você poderá restaurar.')) {
+      state.pdis[idx].removed = true;
+      renderResult();
+    }
+  }
+
+  function restorePDI(idx) {
+    state.pdis[idx].removed = false;
+    renderResult();
+  }
+
+  function removeAction(pdiIdx, actionIdx) {
+    state.pdis[pdiIdx].actions[actionIdx].removed = true;
+    renderResult();
+  }
+
+  function restoreAction(pdiIdx, actionIdx) {
+    state.pdis[pdiIdx].actions[actionIdx].removed = false;
+    renderResult();
+  }
+
+  function addNewPDI() {
+    state.pdis.push({
+      title: 'Novo PDI',
+      type: 'desenvolver',
+      why: '',
+      description: '',
+      actions: [],
+      removed: false
+    });
+    renderResult();
+    setTimeout(() => openEditPdiModal(state.pdis.length - 1), 100);
+  }
+
+  function addNewAction(pdiIdx) {
+    state.pdis[pdiIdx].actions.push({
+      type: 'desafio',
+      name: 'Nova ação',
+      description: '',
+      deadline: '',
+      indicator: '',
+      removed: false
+    });
+    renderResult();
+    setTimeout(() => openEditActionModal(pdiIdx, state.pdis[pdiIdx].actions.length - 1), 100);
+  }
+
+  function openEditPdiModal(idx) {
+    state.editingPdiIndex = idx;
+    const pdi = state.pdis[idx];
+    document.getElementById('editPdiTitle').value = pdi.title || '';
+    document.getElementById('editPdiWhy').value = pdi.why || '';
+    document.getElementById('editPdiDesc').value = pdi.description || '';
+    state.editingPdiType = pdi.type || 'desenvolver';
+    document.getElementById('editTypeDev').classList.toggle('selected', pdi.type === 'desenvolver');
+    document.getElementById('editTypePot').classList.toggle('selected', pdi.type === 'potencializar');
+    document.getElementById('editPdiModal').classList.add('active');
+  }
+
+  function selectEditType(elem, value) {
+    elem.parentElement.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    elem.classList.add('selected');
+    state.editingPdiType = value;
+  }
+
+  function saveEditPDI() {
+    const pdi = state.pdis[state.editingPdiIndex];
+    pdi.title = document.getElementById('editPdiTitle').value.trim();
+    pdi.why = document.getElementById('editPdiWhy').value.trim();
+    pdi.description = document.getElementById('editPdiDesc').value.trim();
+    pdi.type = state.editingPdiType;
+    closeModal('editPdiModal');
+    renderResult();
+  }
+
+  function openEditActionModal(pdiIdx, actionIdx) {
+    state.editingPdiIndex = pdiIdx;
+    state.editingActionIndex = actionIdx;
+    const action = state.pdis[pdiIdx].actions[actionIdx];
+    document.getElementById('editActionType').value = action.type || 'desafio';
+    document.getElementById('editActionName').value = action.name || '';
+    document.getElementById('editActionDesc').value = action.description || '';
+    document.getElementById('editActionDeadline').value = action.deadline || '';
+    document.getElementById('editActionIndicator').value = action.indicator || '';
+    document.getElementById('editActionModal').classList.add('active');
+  }
+
+  function saveEditAction() {
+    const action = state.pdis[state.editingPdiIndex].actions[state.editingActionIndex];
+    action.type = document.getElementById('editActionType').value;
+    action.name = document.getElementById('editActionName').value.trim();
+    action.description = document.getElementById('editActionDesc').value.trim();
+    action.deadline = document.getElementById('editActionDeadline').value;
+    action.indicator = document.getElementById('editActionIndicator').value.trim();
+    closeModal('editActionModal');
+    renderResult();
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+  }
+
+  let confirmCallback = null;
+
+  function showConfirm(title, message, callback) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+    confirmCallback = callback;
+    document.getElementById('confirmModal').classList.add('active');
+  }
+
+  function closeConfirmModal(result) {
+    document.getElementById('confirmModal').classList.remove('active');
+    if (confirmCallback) {
+      confirmCallback(result);
+      confirmCallback = null;
+    }
+  }
+
+  async function regenerateAll() {
+    console.log('regenerateAll chamado');
+    
+    if (!state.discovery.cargo) {
+      alert('Não há respostas anteriores salvas. Use "Recomeçar do zero" para criar um novo PDI desde o início.');
+      return;
+    }
+    
+    showConfirm(
+      '🔄 Gerar outros PDIs',
+      'Isso vai gerar novos PDIs usando suas respostas anteriores. Tem certeza?',
+      async (confirmed) => {
+        console.log('Confirm result:', confirmed);
+        
+        if (!confirmed) {
+          console.log('Usuário cancelou');
+          return;
+        }
+        
+        console.log('Iniciando regeneração...');
+        goToScreen('loading');
+        
+        const steps = document.querySelectorAll('.loading-step');
+        console.log('Loading steps encontrados:', steps.length);
+        steps.forEach(s => s.classList.remove('active', 'done'));
+        
+        animateLoadingSteps();
+        
+        try {
+          console.log('Chamando API para regenerar...');
+          const newPdis = await callClaudeAPI();
+          console.log('Novos PDIs recebidos:', newPdis);
+          state.pdis = newPdis;
+          renderResult();
+          console.log('Renderizado, indo para tela result');
+          goToScreen('result');
+        } catch (err) {
+          console.error('Erro ao regenerar:', err);
+          showError('Erro ao gerar novos PDIs: ' + err.message);
+          goToScreen('result');
+        }
+      }
+    );
+  }
+
+  function restart() {
+    console.log('restart chamado');
+    
+    showConfirm(
+      '↺ Recomeçar do zero',
+      'Tem certeza? Você vai perder todo o PDI atual e começar do zero.',
+      (confirmed) => {
+        console.log('Confirm result:', confirmed);
+        
+        if (!confirmed) {
+          console.log('Usuário cancelou');
+          return;
+        }
+        
+        console.log('Limpando state...');
+        
+        state.pdis = [];
+        state.discovery = {};
+        state.totalPDIs = 2;
+        state.actionsPerPDI = 3;
+        state.editingPdiIndex = null;
+        state.editingActionIndex = null;
+        state.editingPdiType = 'desenvolver';
+        
+        console.log('State limpo:', state);
+        
+        const qtyDisplay = document.getElementById('qtyDisplay');
+        const actionQtyDisplay = document.getElementById('actionQtyDisplay');
+        
+        if (qtyDisplay) qtyDisplay.textContent = 2;
+        if (actionQtyDisplay) actionQtyDisplay.textContent = 3;
+        
+        console.log('Displays resetados');
+        
+        const inputs = document.querySelectorAll('textarea, input[type="text"], input[type="date"]');
+        console.log('Inputs encontrados:', inputs.length);
+        inputs.forEach(i => i.value = '');
+        
+        const selected = document.querySelectorAll('.option-card.selected');
+        console.log('Cards selecionados:', selected.length);
+        selected.forEach(c => c.classList.remove('selected'));
+        
+        const pdisContainer = document.getElementById('pdisContainer');
+        const errorContainer = document.getElementById('errorContainer');
+        const warningContainer = document.getElementById('warningContainer');
+        
+        if (pdisContainer) pdisContainer.innerHTML = '';
+        if (errorContainer) errorContainer.innerHTML = '';
+        if (warningContainer) warningContainer.innerHTML = '';
+        
+        console.log('Containers limpos');
+        console.log('Indo para tela welcome');
+        currentScreen = 'welcome';
+        goToScreen('welcome');
+        console.log('Restart completo!');
+      }
+    );
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML.replace(/\n/g, '<br>');
+  }
+
+  function buildPrintableHTML() {
+    const activePdis = state.pdis.filter(p => !p.removed);
+    const dateStr = new Date().toLocaleDateString('pt-BR');
+    let pdisHTML = '';
+    
+    activePdis.forEach((pdi, idx) => {
+      const typeLabel = pdi.type === 'desenvolver' ? 'Desenvolver' : 'Potencializar';
+      const typeColor = pdi.type === 'potencializar' ? '#FCC359' : '#4003FF';
+      const typeTextColor = pdi.type === 'potencializar' ? '#000949' : '#ffffff';
+      let actionsHTML = '';
+      const activeActions = pdi.actions.filter(a => !a.removed);
+
+      activeActions.forEach((a, ai) => {
+        let typeLabelA = '', actionColor = '';
+        if (a.type === 'desafio') { typeLabelA = '70% · Desafio profissional'; actionColor = '#4003FF'; }
+        else if (a.type === 'mentoria') { typeLabelA = '20% · Mentoria e feedbacks'; actionColor = '#845AF9'; }
+        else if (a.type === 'treinamento') { typeLabelA = '10% · Treinamento e estudo'; actionColor = '#96BFE2'; }
+        const deadlineStr = a.deadline ? new Date(a.deadline + 'T00:00:00').toLocaleDateString('pt-BR') : 'Sem prazo';
+
+        actionsHTML += `<div style="background:#E3F1FF;border-left:4px solid ${actionColor};padding:14px;margin-bottom:10px;border-radius:8px;page-break-inside:avoid;"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;"><span style="background:${actionColor};color:${a.type === 'treinamento' ? '#000949' : '#fff'};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;">${typeLabelA}</span><span style="color:#4003FF;font-weight:600;font-size:13px;">📅 ${deadlineStr}</span></div><div style="font-weight:700;color:#000949;margin-bottom:6px;font-size:14px;">${ai + 1}. ${escapeHtml(a.name || '')}</div>${a.description ? `<div style="font-size:13px;color:#555;margin-bottom:6px;">${escapeHtml(a.description)}</div>` : ''}${a.indicator ? `<div style="background:rgba(255,255,255,0.7);padding:6px 10px;border-radius:6px;font-size:13px;color:#000949;margin-top:6px;"><strong>✓ Como saberá:</strong> ${escapeHtml(a.indicator)}</div>` : ''}</div>`;
+      });
+
+      pdisHTML += `<div style="background:#fff;border-top:6px solid ${typeColor};border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.08);page-break-inside:avoid;"><span style="display:inline-block;background:${typeColor};color:${typeTextColor};padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;">PDI ${idx + 1} · ${typeLabel}</span><h2 style="font-size:22px;color:#000949;margin-bottom:12px;margin-top:0;">${escapeHtml(pdi.title || '')}</h2>${pdi.why ? `<div style="margin-bottom:12px;"><div style="font-size:12px;font-weight:700;color:#4003FF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Por que importa</div><div style="color:#333;font-size:14px;">${escapeHtml(pdi.why)}</div></div>` : ''}${pdi.description ? `<div style="margin-bottom:15px;"><div style="font-size:12px;font-weight:700;color:#4003FF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Descrição</div><div style="color:#333;font-size:14px;">${escapeHtml(pdi.description)}</div></div>` : ''}${activeActions.length ? `<div style="margin-top:18px;padding-top:18px;border-top:2px solid #f3f4f6;"><h3 style="font-size:15px;color:#000949;margin-bottom:12px;margin-top:0;">📋 Plano de ações</h3>${actionsHTML}</div>` : ''}</div>`;
+    });
+
+    let count70 = 0, count20 = 0, count10 = 0;
+    activePdis.forEach(pdi => {
+      pdi.actions.forEach(a => {
+        if (a.removed) return;
+        if (a.type === 'desafio') count70++;
+        else if (a.type === 'mentoria') count20++;
+        else if (a.type === 'treinamento') count10++;
+      });
+    });
+    const total = count70 + count20 + count10;
+    let balanceHTML = '';
+    if (total > 0) {
+      const pct70 = Math.round((count70 / total) * 100);
+      const pct20 = Math.round((count20 / total) * 100);
+      const pct10 = 100 - pct70 - pct20;
+      balanceHTML = `<div style="background:linear-gradient(135deg, #000949 0%, #4003FF 100%);border-radius:14px;padding:24px;color:#fff;margin-bottom:24px;text-align:center;page-break-inside:avoid;"><h3 style="margin:0 0 6px 0;font-size:18px;">Equilíbrio do plano de ações</h3><p style="opacity:0.9;font-size:13px;margin:0 0 16px 0;">Metodologia 70 · 20 · 10</p><div style="display:flex;height:50px;border-radius:10px;overflow:hidden;margin:16px 0;">${pct70 > 0 ? `<div style="background:#4003FF;width:${pct70}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;">${pct70 > 8 ? pct70 + '%' : ''}</div>` : ''}${pct20 > 0 ? `<div style="background:#845AF9;width:${pct20}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;">${pct20 > 8 ? pct20 + '%' : ''}</div>` : ''}${pct10 > 0 ? `<div style="background:#96BFE2;width:${pct10}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000949;">${pct10 > 8 ? pct10 + '%' : ''}</div>` : ''}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;font-size:12px;"><div><strong>Experiência prática</strong><br>${pct70}%</div><div><strong>Trocas e feedbacks</strong><br>${pct20}%</div><div><strong>Conteúdo estruturado</strong><br>${pct10}%</div></div></div>`;
+    }
+
+    return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Meu PDI - ${escapeHtml(state.discovery.cargo || '')}</title><style>@page{size:A4;margin:15mm;}*{box-sizing:border-box;}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f8ff;color:#000949;line-height:1.5;margin:0;padding:30px;}.header-box{background:linear-gradient(135deg,#4003FF 0%,#845AF9 100%);color:white;padding:30px;border-radius:14px;margin-bottom:24px;text-align:center;}.header-box h1{margin:0 0 8px 0;font-size:28px;}.header-box p{margin:4px 0;opacity:0.95;font-size:14px;}.print-btn{position:fixed;top:20px;right:20px;background:#4003FF;color:white;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(64,3,255,0.3);font-size:14px;z-index:999;}.footer{text-align:center;padding:20px;color:#6b7280;font-size:13px;border-top:2px solid #e5e7eb;margin-top:30px;}@media print{body{background:white;padding:0;}.print-btn{display:none;}}</style></head><body><button class="print-btn" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button><div class="header-box"><h1>Meu PDI</h1><p><strong>${escapeHtml(state.discovery.cargo || '')}</strong></p><p>Gerado em ${dateStr}</p></div>${balanceHTML}${pdisHTML}<div class="footer">Você decide. Você age. Você evolui. O líder apoia — mas o protagonista é você.<br><em>Criado com Criador de PDI · byx</em></div><script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),500)});<\/script></body></html>`;
+  }
+
+  function downloadPDF() {
+    const html = buildPrintableHTML();
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('⚠️ A nova janela foi bloqueada pelo navegador.\n\n📥 Vou baixar um arquivo HTML.\n\n✅ Para salvar como PDF:\n1. Abra o arquivo baixado no navegador\n2. Aperte Ctrl+P (Windows) ou Cmd+P (Mac)\n3. Em "Destino", escolha "Salvar como PDF"\n4. Clique em Salvar');
+      downloadHTML();
+      return;
+    }
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+  }
+
+  function downloadHTML() {
+    const html = buildPrintableHTML();
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Meu_PDI_${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    setTimeout(() => {
+      alert('✓ Arquivo HTML baixado com sucesso!\n\n📄➡️📕 Para converter em PDF:\n\n1. Abra o arquivo no seu navegador (dê dois cliques nele)\n2. Aperte Ctrl+P (Windows/Linux) ou Cmd+P (Mac)\n3. Em "Destino" ou "Impressora", escolha "Salvar como PDF"\n4. Clique em Salvar\n\nPronto! Seu PDI estará em PDF. 🎉');
+    }, 300);
+  }
+
+  function exportText() {
+    let text = '═══════════════════════════\n  MEU PDI - byx\n═══════════════════════════\n';
+    text += `\nCargo: ${state.discovery.cargo}\nGerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
+    const activePdis = state.pdis.filter(p => !p.removed);
+    activePdis.forEach((pdi, idx) => {
+      text += `\n\n━━━ PDI ${idx + 1}: ${pdi.title} ━━━\n`;
+      text += `Tipo: ${pdi.type === 'desenvolver' ? 'Desenvolver' : 'Potencializar'}\n`;
+      if (pdi.why) text += `\nPor que importa agora:\n${pdi.why}\n`;
+      if (pdi.description) text += `\nDescrição:\n${pdi.description}\n`;
+      const activeActions = pdi.actions.filter(a => !a.removed);
+      if (activeActions.length) {
+        text += `\n📋 PLANO DE AÇÕES:\n`;
+        activeActions.forEach((a, ai) => {
+          const typeMap = { desafio: '70% · Desafio profissional', mentoria: '20% · Mentoria e feedbacks', treinamento: '10% · Treinamento e estudo' };
+          text += `\n  ${ai + 1}. ${a.name}\n     Tipo: ${typeMap[a.type] || ''}\n`;
+          if (a.deadline) text += `     Prazo: ${new Date(a.deadline + 'T00:00:00').toLocaleDateString('pt-BR')}\n`;
+          if (a.description) text += `     Descrição: ${a.description}\n`;
+          if (a.indicator) text += `     Como saberá que funcionou: ${a.indicator}\n`;
+        });
+      }
+    });
+    text += '\n\n═══════════════════════════\nVocê decide. Você age. Você evolui.\n═══════════════════════════\n';
+    navigator.clipboard.writeText(text).then(() => alert('✓ PDI copiado! Cole onde quiser.')).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('✓ PDI copiado!');
+    });
+  }
+
+  updateProgress();
+</script>
+
+</body>
+</html>
