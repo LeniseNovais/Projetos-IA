@@ -2,7 +2,7 @@
 // Recebe os dados do front, chama o Gemini com a API key protegida,
 // e devolve a resposta. A chave NUNCA é exposta ao navegador.
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Apenas POST é permitido
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método não permitido' });
