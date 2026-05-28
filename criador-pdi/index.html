@@ -1209,24 +1209,8 @@
 
   <!-- TELA 4B: LIMITE ATINGIDO -->
   <div class="screen" id="screen-limit">
-    <div class="limit-screen">
-      <span class="limit-icon">⏳</span>
-      <h2>Limite diário de uso atingido</h2>
-      <p>Nosso Criador de PDI está com alta demanda hoje e atingiu o limite diário de uso gratuito da IA.</p>
-      <p>Não se preocupe: o contador zera automaticamente em algumas horas.</p>
-
-      <div class="limit-box">
-        <strong>📅 Tente novamente amanhã</strong>
-        Suas respostas não foram perdidas — você pode voltar a qualquer momento e o formulário estará pronto para uso.
-      </div>
-
-      <p style="font-size:14px;opacity:0.85;">Enquanto isso, que tal anotar as reflexões que você já fez sobre seu desenvolvimento? Esse é o trabalho mais importante. A IA só ajuda a organizar.</p>
-
-      <div class="final-actions">
-        <button class="btn-yellow" onclick="goToScreen('discovery')">↺ Voltar e revisar respostas</button>
-        <button class="btn-secondary" onclick="goToScreen('welcome')">🏠 Ir para o início</button>
-      </div>
-      <div class="footer-credit" style="color:rgba(255,255,255,0.6);">Criado por Ana Lenise Novais</div>
+    <div class="limit-screen" id="limitScreenContent">
+      <!-- conteúdo preenchido dinamicamente pelo JS -->
     </div>
   </div>
 
@@ -1434,7 +1418,7 @@
 
       // Limite atingido → vai para a tela específica
       if (err.code === 'rate_limit') {
-        goToScreen('limit');
+        showLimitScreen(err.limitType);
         return;
       }
 
@@ -1481,6 +1465,7 @@
     if (!response.ok) {
       const err = new Error(data.message || 'Erro ao gerar PDIs.');
       err.code = data.error || 'unknown';
+      err.limitType = data.limitType || null;
       throw err;
     }
 
@@ -1782,7 +1767,7 @@
           console.error('Erro ao regenerar:', err);
 
           if (err.code === 'rate_limit') {
-            goToScreen('limit');
+            showLimitScreen(err.limitType);
             return;
           }
 
@@ -1948,6 +1933,42 @@
       document.body.removeChild(ta);
       alert('✓ PDI copiado!');
     });
+  }
+
+  function showLimitScreen(limitType) {
+    const isDaily = limitType === 'daily';
+
+    const icon = isDaily ? '⏳' : '⏱️';
+    const title = isDaily ? 'Limite diário atingido' : 'Muitas requisições simultâneas';
+    const msg1 = isDaily
+      ? 'Nosso Criador de PDI atingiu o limite diário de uso gratuito da IA.'
+      : 'Muitas pessoas estão usando o Criador de PDI ao mesmo tempo agora.';
+    const msg2 = isDaily
+      ? 'O contador zera automaticamente à meia-noite. Volte amanhã para continuar.'
+      : 'Não se preocupe: o limite por minuto zera automaticamente. Tente novamente em 1 ou 2 minutos.';
+    const boxTitle = isDaily ? '📅 Tente novamente amanhã' : '⏱️ Tente novamente em instantes';
+    const boxMsg = isDaily
+      ? 'Suas respostas não foram perdidas — volte amanhã e o formulário estará pronto.'
+      : 'Suas respostas não foram perdidas — aguarde alguns minutos e tente de novo.';
+
+    document.getElementById('limitScreenContent').innerHTML = `
+      <span class="limit-icon">${icon}</span>
+      <h2>${title}</h2>
+      <p>${msg1}</p>
+      <p>${msg2}</p>
+      <div class="limit-box">
+        <strong>${boxTitle}</strong>
+        ${boxMsg}
+      </div>
+      <p style="font-size:14px;opacity:0.85;">Enquanto isso, que tal anotar as reflexões que você já fez sobre seu desenvolvimento? Esse é o trabalho mais importante. A IA só ajuda a organizar.</p>
+      <div class="final-actions">
+        <button class="btn-yellow" onclick="goToScreen('discovery')">↺ Voltar e revisar respostas</button>
+        <button class="btn-secondary" onclick="goToScreen('welcome')">🏠 Ir para o início</button>
+      </div>
+      <div class="footer-credit" style="color:rgba(255,255,255,0.6);">Criado por Ana Lenise Novais</div>
+    `;
+
+    goToScreen('limit');
   }
 
   updateProgress();
