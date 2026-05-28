@@ -107,7 +107,7 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       console.error('Erro do Gemini:', geminiResponse.status, errText);
       return res.status(502).json({
         error: 'gemini_error',
-        message: 'A IA está temporariamente indisponível. Tente novamente em alguns instantes.'
+        message: 'Erro ' + geminiResponse.status + ': ' + errText
       });
     }
 
