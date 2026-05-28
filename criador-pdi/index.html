@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Criador de PDI - byx</title>
+<title>Criador de PDI</title>
 <style>
   :root {
     --byx-blue: #4003FF;
@@ -1884,7 +1884,7 @@
       balanceHTML = `<div style="background:linear-gradient(135deg, #000949 0%, #4003FF 100%);border-radius:14px;padding:24px;color:#fff;margin-bottom:24px;text-align:center;page-break-inside:avoid;"><h3 style="margin:0 0 6px 0;font-size:18px;">Equilíbrio do plano de ações</h3><p style="opacity:0.9;font-size:13px;margin:0 0 16px 0;">Metodologia 70 · 20 · 10</p><div style="display:flex;height:50px;border-radius:10px;overflow:hidden;margin:16px 0;">${pct70 > 0 ? `<div style="background:#4003FF;width:${pct70}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;">${pct70 > 8 ? pct70 + '%' : ''}</div>` : ''}${pct20 > 0 ? `<div style="background:#845AF9;width:${pct20}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;">${pct20 > 8 ? pct20 + '%' : ''}</div>` : ''}${pct10 > 0 ? `<div style="background:#96BFE2;width:${pct10}%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000949;">${pct10 > 8 ? pct10 + '%' : ''}</div>` : ''}</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;font-size:12px;"><div><strong>Experiência prática</strong><br>${pct70}%</div><div><strong>Trocas e feedbacks</strong><br>${pct20}%</div><div><strong>Conteúdo estruturado</strong><br>${pct10}%</div></div></div>`;
     }
 
-    return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Meu PDI - ${escapeHtml(state.discovery.cargo || '')}</title><style>@page{size:A4;margin:15mm;}*{box-sizing:border-box;}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f8ff;color:#000949;line-height:1.5;margin:0;padding:30px;}.header-box{background:linear-gradient(135deg,#4003FF 0%,#845AF9 100%);color:white;padding:30px;border-radius:14px;margin-bottom:24px;text-align:center;}.header-box h1{margin:0 0 8px 0;font-size:28px;}.header-box p{margin:4px 0;opacity:0.95;font-size:14px;}.print-btn{position:fixed;top:20px;right:20px;background:#4003FF;color:white;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(64,3,255,0.3);font-size:14px;z-index:999;}.footer{text-align:center;padding:20px;color:#6b7280;font-size:13px;border-top:2px solid #e5e7eb;margin-top:30px;}@media print{body{background:white;padding:0;}.print-btn{display:none;}}</style></head><body><button class="print-btn" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button><div class="header-box"><h1>Meu PDI</h1><p><strong>${escapeHtml(state.discovery.cargo || '')}</strong></p><p>Gerado em ${dateStr}</p></div>${balanceHTML}${pdisHTML}<div class="footer">Você decide. Você age. Você evolui. O líder apoia — mas o protagonista é você.<br><em>Criado com Criador de PDI · byx</em></div><script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),500)});<\/script></body></html>`;
+    return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Meu PDI - ${escapeHtml(state.discovery.cargo || '')}</title><style>@page{size:A4;margin:15mm;}*{box-sizing:border-box;}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f8ff;color:#000949;line-height:1.5;margin:0;padding:30px;}.header-box{background:linear-gradient(135deg,#4003FF 0%,#845AF9 100%);color:white;padding:30px;border-radius:14px;margin-bottom:24px;text-align:center;}.header-box h1{margin:0 0 8px 0;font-size:28px;}.header-box p{margin:4px 0;opacity:0.95;font-size:14px;}.print-btn{position:fixed;top:20px;right:20px;background:#4003FF;color:white;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 15px rgba(64,3,255,0.3);font-size:14px;z-index:999;}.footer{text-align:center;padding:20px;color:#6b7280;font-size:13px;border-top:2px solid #e5e7eb;margin-top:30px;}@media print{body{background:white;padding:0;}.print-btn{display:none;}}</style></head><body><button class="print-btn" onclick="window.print()">🖨️ Imprimir / Salvar como PDF</button><div class="header-box"><h1>Meu PDI</h1><p><strong>${escapeHtml(state.discovery.cargo || '')}</strong></p><p>Gerado em ${dateStr}</p></div>${balanceHTML}${pdisHTML}<div class="footer">Você decide. Você age. Você evolui. O líder apoia — mas o protagonista é você.<br><em>Criado com Criador de PDI</em></div><script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),500)});<\/script></body></html>`;
   }
 
   function downloadPDF() {
@@ -1918,7 +1918,7 @@
   }
 
   function exportText() {
-    let text = '═══════════════════════════\n  MEU PDI - byx\n═══════════════════════════\n';
+    let text = '═══════════════════════════\n  MEU PDI\n═══════════════════════════\n';
     text += `\nCargo: ${state.discovery.cargo}\nGerado em: ${new Date().toLocaleDateString('pt-BR')}\n`;
     const activePdis = state.pdis.filter(p => !p.removed);
     activePdis.forEach((pdi, idx) => {
