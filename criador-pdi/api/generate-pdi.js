@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     const hoje = new Date().toISOString().split('T')[0];
 
-    const prompt = `Você é um especialista em desenvolvimento de pessoas e PDI (Plano de Desenvolvimento Individual). Vou te passar as respostas de um profissional sobre carreira e desenvolvimento. Sua tarefa é criar exatamente ${totalPDIs} PDI(s), cada um com exatamente ${actionsPerPDI} ações específicas seguindo a metodologia 70-20-10 da byx.
+    const prompt = `Você é um especialista em desenvolvimento de pessoas e PDI (Plano de Desenvolvimento Individual). Vou te passar as respostas de um profissional sobre carreira e desenvolvimento. Sua tarefa é criar exatamente ${totalPDIs} PDI(s), cada um com exatamente ${actionsPerPDI} ações específicas seguindo a metodologia 70-20-10.
 
 INFORMAÇÕES DO PROFISSIONAL:
 - Cargo/função: ${discovery.cargo}
