@@ -1,0 +1,22 @@
+# Variáveis de ambiente (NUNCA suba para o GitHub)
+.env
+.env.local
+.env.*.local
+
+# Dependências
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Vercel
+.vercel
