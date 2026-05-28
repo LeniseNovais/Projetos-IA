@@ -96,8 +96,10 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
     // Tratamento de rate limit (429) — limite diário ou por minuto estourado
     if (geminiResponse.status === 429) {
       const errData = await geminiResponse.json().catch(() => ({}));
-      const errMessage = errData?.error?.message || '';
-      const isDaily = errMessage.toLowerCase().includes('quota') || errMessage.toLowerCase().includes('daily');
+      const errMessage = (errData?.error?.message || '').toLowerCase();
+      const isDaily = errMessage.includes('daily') || 
+                      errMessage.includes('quota exceeded') ||
+                      errMessage.includes('resource exhausted');
 
       return res.status(429).json({
         error: 'rate_limit',
