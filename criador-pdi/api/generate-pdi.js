@@ -75,7 +75,7 @@ Responda APENAS com um JSON válido neste formato exato, sem nenhum texto antes 
 
 Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações cada.`;
 
-    // Chamada para o Gemini 1.5 Flash (modelo gratuito)
+    // Chamada para o Gemini 2.0 Flash (modelo gratuito)
     const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const geminiResponse = await fetch(geminiURL, {
@@ -95,9 +95,13 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
 
     // Tratamento de rate limit (429) — limite diário ou por minuto estourado
     if (geminiResponse.status === 429) {
+      const errData = await geminiResponse.json().catch(() => ({}));
+      const errMessage = errData?.error?.message || '';
+      const isDaily = errMessage.toLowerCase().includes('quota') || errMessage.toLowerCase().includes('daily');
+
       return res.status(429).json({
         error: 'rate_limit',
-        message: 'Limite diário de uso atingido. Por favor, tente novamente amanhã.'
+        limitType: isDaily ? 'daily' : 'minute'
       });
     }
 
