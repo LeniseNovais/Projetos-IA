@@ -75,8 +75,8 @@ Responda APENAS com um JSON válido neste formato exato, sem nenhum texto antes 
 
 Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações cada.`;
 
-    // Chamada para o Gemini 1.5 Flash (modelo gratuito)
-    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${apiKey}`;
+    // Chamada para o Gemini 2.5 Flash (modelo gratuito)
+    const geminiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const geminiResponse = await fetch(geminiURL, {
       method: 'POST',
