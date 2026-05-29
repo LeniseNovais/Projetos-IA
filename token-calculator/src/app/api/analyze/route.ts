@@ -5,7 +5,7 @@ import { estimateTokens } from "@/lib/tokens";
 import type { AnalyzeRequest } from "@/lib/types";
 
 // ─── Erro especial para limite total atingido ────────────────────────
-export class AllProvidersExhaustedError extends Error {
+class AllProvidersExhaustedError extends Error {
   constructor() {
     super("ALL_PROVIDERS_EXHAUSTED");
     this.name = "AllProvidersExhaustedError";
