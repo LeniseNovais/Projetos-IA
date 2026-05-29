@@ -77,15 +77,16 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
         return res.status(200).json(geminiResult.data);
       }
 
-      // Se for limite, tenta o Groq antes de desistir
+      // Independente do motivo (limite ou instabilidade), tenta o Groq
+      // Se for instabilidade, na próxima requisição tentará o Gemini de novo
       if (geminiResult.rateLimited) {
         console.log('Gemini com limite atingido, tentando Groq...');
       } else {
-        // Erro que não é limite — tenta Groq desta vez, mas volta ao Gemini depois
         console.log('Gemini instável, tentando Groq desta vez...');
       }
+    }
 
-    // ─── TENTA GROQ SE GEMINI FALHOU POR LIMITE ─────────────
+    // ─── TENTA GROQ ──────────────────────────────────────────
     if (groqKey) {
       const groqResult = await tryGroq(groqKey, prompt);
 
@@ -94,7 +95,6 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       }
 
       if (groqResult.rateLimited) {
-        // Ambos com limite
         return res.status(429).json({
           error: 'rate_limit',
           limitType: 'daily'
@@ -107,7 +107,7 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       });
     }
 
-    // Só chega aqui se Gemini teve limite mas não tem Groq configurado
+    // Sem nenhuma API disponível
     return res.status(429).json({
       error: 'rate_limit',
       limitType: 'daily'
