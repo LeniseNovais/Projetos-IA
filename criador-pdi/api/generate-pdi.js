@@ -81,13 +81,9 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       if (geminiResult.rateLimited) {
         console.log('Gemini com limite atingido, tentando Groq...');
       } else {
-        // Erro que não é limite — retorna direto sem tentar Groq
-        return res.status(502).json({
-          error: 'gemini_error',
-          message: geminiResult.message
-        });
+        // Erro que não é limite — tenta Groq desta vez, mas volta ao Gemini depois
+        console.log('Gemini instável, tentando Groq desta vez...');
       }
-    }
 
     // ─── TENTA GROQ SE GEMINI FALHOU POR LIMITE ─────────────
     if (groqKey) {
