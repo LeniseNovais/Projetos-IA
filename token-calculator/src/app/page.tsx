@@ -36,6 +36,137 @@ async function callAnalyze(
   return data;
 }
 
+/* ─── Limit Screen ───────────────────────────────────────────────── */
+function LimitScreen({ onBack }: { onBack: () => void }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "linear-gradient(135deg, #1e3a5f 0%, #2d1b69 50%, #1a1a2e 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        padding: 24,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 480,
+          width: "100%",
+          textAlign: "center",
+          color: "#fff",
+        }}
+      >
+        {/* Ícone */}
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.1)",
+            border: "2px solid rgba(255,255,255,0.2)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 36,
+            margin: "0 auto 24px",
+          }}
+        >
+          📊
+        </div>
+
+        <h2
+          style={{
+            fontSize: 28,
+            fontWeight: 800,
+            marginBottom: 16,
+            lineHeight: 1.2,
+          }}
+        >
+          Limite diário atingido
+        </h2>
+
+        <p style={{ fontSize: 15, opacity: 0.85, lineHeight: 1.7, marginBottom: 28 }}>
+          Nossa Calculadora de Tokens atingiu o limite diário de uso gratuito
+          das IAs. O contador zera automaticamente à meia-noite. Volte amanhã
+          para continuar.
+        </p>
+
+        {/* Card info */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 16,
+            padding: "20px 24px",
+            marginBottom: 28,
+          }}
+        >
+          <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 6, letterSpacing: 1, fontWeight: 700 }}>
+            📅 TENTE NOVAMENTE AMANHÃ
+          </div>
+          <p style={{ fontSize: 14, opacity: 0.9, lineHeight: 1.6, margin: 0 }}>
+            Suas análises não foram perdidas — volte amanhã e a calculadora
+            estará pronta para otimizar seus prompts novamente.
+          </p>
+        </div>
+
+        <p style={{ fontSize: 13, opacity: 0.65, lineHeight: 1.6, marginBottom: 32 }}>
+          Enquanto isso, que tal revisar as dicas de otimização de tokens que
+          você já recebeu? Esse é o trabalho mais importante. A IA só ajuda a
+          organizar.
+        </p>
+
+        {/* Botões */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <button
+            onClick={onBack}
+            style={{
+              padding: "12px 24px",
+              background: C.gold,
+              color: "#fff",
+              border: "none",
+              borderRadius: 10,
+              cursor: "pointer",
+              fontSize: 14,
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            ↺ Voltar e revisar
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: "12px 24px",
+              background: "rgba(255,255,255,0.12)",
+              color: "#fff",
+              border: "1px solid rgba(255,255,255,0.25)",
+              borderRadius: 10,
+              cursor: "pointer",
+              fontSize: 14,
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            🏠 Ir para o início
+          </button>
+        </div>
+
+        <div style={{ marginTop: 32, fontSize: 12, opacity: 0.45 }}>
+          Criado por Ana Lenise Novais
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Sub-components ─────────────────────────────────────────────── */
 function DonutMetric({
   value,
@@ -548,6 +679,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showRules, setShowRules] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [allExhausted, setAllExhausted] = useState(false);
 
   const tokens = estimateTokens(text);
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -562,6 +694,7 @@ export default function Home() {
     setShowRules(false);
     setShowAdvanced(false);
     setError("");
+    setAllExhausted(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -577,7 +710,9 @@ export default function Home() {
       const parsed = await callAnalyze(text, textType, "optimized");
       setResult(parsed as OptimizedResult);
     } catch (e) {
-      setError("Erro ao analisar: " + (e instanceof Error ? e.message : "tente novamente"));
+      const msg = e instanceof Error ? e.message : "";
+      if (msg === "ALL_PROVIDERS_EXHAUSTED") { setAllExhausted(true); }
+      else setError("Erro ao analisar: " + (msg || "tente novamente"));
     }
     setLoading(false);
   }, [text, textType]);
@@ -590,10 +725,9 @@ export default function Home() {
       const parsed = await callAnalyze(text, textType, "engineered");
       setResultPE(parsed as EngineeredResult);
     } catch (e) {
-      setError(
-        "Erro ao gerar versão com engenharia: " +
-          (e instanceof Error ? e.message : "tente novamente")
-      );
+      const msg = e instanceof Error ? e.message : "";
+      if (msg === "ALL_PROVIDERS_EXHAUSTED") { setAllExhausted(true); }
+      else setError("Erro ao gerar versão com engenharia: " + (msg || "tente novamente"));
     }
     setLoadingPE(false);
   }, [text, textType]);
@@ -642,6 +776,7 @@ export default function Home() {
         padding: "44px 16px 0",
       }}
     >
+      {allExhausted && <LimitScreen onBack={() => setAllExhausted(false)} />}
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
