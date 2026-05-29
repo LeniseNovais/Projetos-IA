@@ -14,7 +14,7 @@ class AllProvidersExhaustedError extends Error {
 
 // ─── Gemini ──────────────────────────────────────────────────────────
 const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
 async function callGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
