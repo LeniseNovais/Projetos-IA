@@ -74,6 +74,7 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       const geminiResult = await tryGemini(geminiKey, prompt);
 
       if (geminiResult.success) {
+        console.log('✅ PDI gerado com sucesso via: Gemini');
         return res.status(200).json(geminiResult.data);
       }
 
@@ -91,6 +92,7 @@ Retorne EXATAMENTE ${totalPDIs} PDI(s) com EXATAMENTE ${actionsPerPDI} ações c
       const groqResult = await tryGroq(groqKey, prompt);
 
       if (groqResult.success) {
+        console.log('✅ PDI gerado com sucesso via: Groq');
         return res.status(200).json(groqResult.data);
       }
 
